@@ -143,8 +143,8 @@ function setPageBackgroundColor() {
     const body = document.querySelector("article");
 
     //find post properties
-    const post_author_URL = header.querySelectorAll("a")[1].href;
-    const post_author_name = header.querySelectorAll("a")[1].text;
+    const post_author_URL = header.querySelectorAll("a")[0] ? header.querySelectorAll("a")[0].href : header.querySelectorAll("a")[1].href;
+    const post_author_name = header.querySelectorAll("a")[0] ? header.querySelectorAll("a")[0].text : header.querySelectorAll("a")[1].text;
     const post_following_statue = header.querySelector("button").innerText
     const post_send_time = body.querySelector("div > div > div > div > div > a > time").getAttribute('title')
     const post_liked = body.querySelector("div > div > div > div > section > div > div > a > span").textContent
@@ -251,11 +251,13 @@ function setPageBackgroundColor() {
       const jsonResult = parsePostToJson(html)
       downloader(JSON.stringify(jsonResult), "application/json", "instagram_comments.json")
     }else if(more === null && tryCount!==0){
+      console.clear()
       console.log(`simulated Click failed, try again`)
       tryCount--
     }else{
       tryCount = 3
       simulatedClick(document.querySelector('svg[aria-label="Load more comments"]'))
+      console.clear()
       console.log(`Load more data${".".repeat(loadCount++)}`)
     }
   }
