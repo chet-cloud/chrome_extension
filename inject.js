@@ -117,8 +117,8 @@ function buildPost() {
     const body = document.querySelector("article");
 
     //find post properties
-    const post_author_URL = header.querySelectorAll("a")[1].href;
-    const post_author_name = header.querySelectorAll("a")[1].text;
+    const post_author_URL = header.querySelectorAll("a")[0] ? header.querySelectorAll("a")[0].href : header.querySelectorAll("a")[1].href;
+    const post_author_name = header.querySelectorAll("a")[0] ? header.querySelectorAll("a")[0].text : header.querySelectorAll("a")[1].text;
     const post_following_statue = header.querySelector("button").innerText
     const post_send_time = body.querySelector("div > div > div > div > div > a > time").getAttribute('title')
     const post_liked = body.querySelector("div > div > div > div > section > div > div > a > span").textContent
@@ -237,3 +237,86 @@ interval = setInterval(iterateOverArray, 1000);
 
 
 // https://www.instagram.com/p/CYb78QHF1h-/
+// 300main
+// https://www.instagram.com/p/CY-DPR-M678/
+
+
+
+/**
+ * Ajax request
+ * @param url
+ * @param str
+ * @returns {Promise<unknown>}
+ * @constructor
+ * Example
+ *  PostData('//localhost:8080/msg', "jsonString").then(console.log);
+ */
+function PostData(url, str) {
+    return new Promise((ok, error) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                ok(xhr.responseText);
+            } else {
+                error(xhr.status + ":" + xhr.statusText)
+            }
+        }
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-Type', 'text/plain');
+        xhr.send(str);
+    })
+}
+
+/**
+ * load js files in github project
+ * @param urls
+ * @returns {Promise<unknown[]>}
+ * @constructor
+ */
+function LoadScriptFromGithub(urls) {
+    function GetData(url, str) {
+        return new Promise((ok, error) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = () => {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    ok(xhr.responseText);
+                } else {
+                    error(xhr.status + ":" + xhr.statusText)
+                }
+            }
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Content-Type', 'text/plain');
+            xhr.send(str);
+        })
+    }
+
+    const container = document.getElementsByTagName('head')[0]
+    return Promise.all(urls.map(u => {
+        return GetData(u).then((text) => {
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.innerHTML = text;
+            return script
+        })
+    })).then(scripts => {
+        scripts.map(s => {
+            container.appendChild(s);
+        })
+    })
+}
+
+const intercept = (urlmatch, callback) => {
+    let send = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function() {
+      this.addEventListener('readystatechange', function() {
+        if (this.responseURL.includes(urlmatch) && this.readyState === 4) {
+          callback(this);
+        }
+      }, false);
+      send.apply(this, arguments);
+    };
+};
+
+  intercept("https://i.instagram.com/",(t)=>{
+    //console.log(JSON.parse(t.response))
+  })
