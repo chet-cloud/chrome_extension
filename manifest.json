@@ -10,7 +10,7 @@
     {
       "matches": ["http://*/*","https://*/*"],
       "js": ["/lib/injection.js"],
-      "run_at": "document_end"
+      "run_at": "document_start"
     }
   ],
   "permissions": ["webRequest","tabs","storage", "activeTab", "scripting"],
