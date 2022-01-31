@@ -6,14 +6,23 @@
   "background": {
     "service_worker": "lib/background.js"
   },
+  "externally_connectable": {
+    "matches": ["*://*.instagram.com/*"]
+  },
   "content_scripts": [
     {
-      "matches": ["http://*/*","https://*/*"],
+      "matches": ["http://*.instagram.com/*","https://*.instagram.com/*"],
       "js": ["/lib/injection.js"],
       "run_at": "document_start"
     }
   ],
-  "permissions": ["webRequest","tabs","storage", "activeTab", "scripting"],
+  "permissions": [
+    "webRequest",
+    "tabs",
+    "storage", 
+    "activeTab", 
+    "scripting"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
