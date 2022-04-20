@@ -1,3 +1,6 @@
+const { Parser } = require('json2csv');
+
+
 let comments_300main = require('./300main_comments.json')
 let followers_300main = require('./300main_followers.json')
 let liked_300main = require('./300main_liked.json')
@@ -22,18 +25,20 @@ const result = comments_300main.comments
 .filter((comment)=>{
     return comment.comment_At.length >0
 })
-.filter((comment)=>{
-    return _followers_300main.hasOwnProperty(comment.comment_author_name)
-})
-.filter((comment)=>{
-    return _followers_wpgsymphony.hasOwnProperty(comment.comment_author_name)
-})
-.filter((comment)=>{
-    return _liked_300main.hasOwnProperty(comment.comment_author_name)
-})
+// .filter((comment)=>{
+//     return _followers_300main.hasOwnProperty(comment.comment_author_name)
+// })
+// .filter((comment)=>{
+//     return _followers_wpgsymphony.hasOwnProperty(comment.comment_author_name)
+// })
+// .filter((comment)=>{
+//     return _liked_300main.hasOwnProperty(comment.comment_author_name)
+// })
 
 const fs = require('fs')
 console.log(result)
-fs.writeFileSync("./result.json",JSON.stringify(result))
+const csv =  new Parser().parse(result);
+console.log(csv)
+fs.writeFileSync("./result.csv", csv)
 
 
